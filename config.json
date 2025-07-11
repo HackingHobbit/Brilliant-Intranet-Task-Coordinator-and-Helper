@@ -1,0 +1,21 @@
+{
+  "email_mode": "local",
+  "calendar_mode": "local",
+  "financial_api": "yfinance",
+  "enable_3d": false,
+  "avatar_path": "assets/avatar.jpg",
+  "llm_model": "llama3",
+  "stt_model": "whisper-small",
+  "tts_voice": "en_US-amy-medium",
+  "neon_glow_color": "#00bfff",
+  "ui_theme": "futuristic",
+  "performance_mode": "optimized",
+  "memory_enabled": true,
+  "agentic_tools_enabled": true,
+  "vision_enabled": true,
+  "webcam_enabled": false,
+  "auto_save_session": true,
+  "max_session_history": 50,
+  "backend_port": 5001,
+  "api_keys": {}
+}
