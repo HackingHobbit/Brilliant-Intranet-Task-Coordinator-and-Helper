@@ -1,3 +1,9 @@
+import warnings
+from pydantic import PydanticDeprecatedSince20
+
+warnings.filterwarnings("ignore", category=PydanticDeprecatedSince20)
+warnings.filterwarnings("ignore", message="Mixing V1 models and V2 models")
+
 from flask import Flask, request, jsonify
 import json
 import keyring
@@ -123,5 +129,9 @@ def set_key():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/')
+def home():
+    return "Hello, the app is running successfully!"
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)

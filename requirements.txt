@@ -29,3 +29,6 @@ requests>=2.32.3
 torch>=2.3.1
 pyttsx3>=2.90
 paginate==0.5.6
+crewai-tools
+openpyxl>=3.1.5
+setuptools<81.0.0

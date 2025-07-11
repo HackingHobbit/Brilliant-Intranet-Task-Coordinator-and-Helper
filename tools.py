@@ -1,23 +1,12 @@
-from crewai import Tool
+from langchain.tools import Tool
 import os
 import shutil
 import requests
 import subprocess
-from googleapiclient.discovery import build
-from msal import ConfidentialClientApplication
-import googlemaps
 import yfinance as yf
-from alpha_vantage.timeseries import TimeSeries
-import finnhub
-from pyicloud import PyiCloudService
-from caldav import DAVClient
-import imaplib
-import smtplib
-from email.mime.text import MIMEText
-import openpyxl
-import pandas as pd
 from sqlalchemy import create_engine
-import icalendar
+import pandas as pd
+import openpyxl
 
 class AgentTools:
     def __init__(self, config, keyring):
