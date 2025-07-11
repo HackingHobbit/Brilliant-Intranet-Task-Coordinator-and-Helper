@@ -1,39 +1,14 @@
 {
   "name": "local-ai-avatar",
   "version": "1.0.0",
-  "description": "100% Local AI Talking Avatar with agentic capabilities",
   "main": "main.js",
   "scripts": {
-    "setup": "python setup.py",
-    "validate": "python validate_setup.py",
-    "download-models": "python download_models.py --required-only",
-    "setup-keys": "python setup_keys.py",
-    "start": "electron .",
-    "dev": "electron . --dev",
-    "start-backend": "python app.py",
-    "test-port": "python port_manager.py",
-    "test-dynamic-port": "python test_dynamic_port.py",
-    "build": "electron-builder"
+    "start": "electron ."
   },
   "dependencies": {
+    "electron": "^31.2.0",
+    "three": "^0.166.1",
     "axios": "^1.7.2",
-    "tailwindcss": "^3.4.6",
-    "three": "^0.167.0",
-    "concurrently": "^8.2.2",
-    "wait-on": "^7.2.0"
-  },
-  "devDependencies": {
-    "electron": "^37.2.1",
-    "electron-builder": "^24.9.1"
-  },
-  "keywords": [
-    "ai",
-    "avatar",
-    "local",
-    "electron",
-    "speech",
-    "synthesis"
-  ],
-  "author": "Local AI Avatar Project",
-  "license": "MIT"
+    "wawa-lipsync": "^1.0.0"  // Adjust version
+  }
 }

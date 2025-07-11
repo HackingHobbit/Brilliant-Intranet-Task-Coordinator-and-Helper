@@ -1,206 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local AI Avatar</title>
-    <link href="styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local AI Avatar</title>
+  <link href="styles.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <script src="avatar.js" defer></script>
+  <script src="lipsync.js" defer></script>
+  <script src="settings-panel.js" defer></script>
+  <script src="ui.js" defer></script>
 </head>
-<body class="bg-black text-white font-orbitron">
-    <div class="flex flex-col h-screen relative overflow-hidden">
-        <!-- Background Effects -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-900 via-black to-purple-900 opacity-50"></div>
-        <div class="absolute inset-0 bg-grid-pattern opacity-20"></div>
-        
-        <!-- Header -->
-        <header class="relative z-10 p-4 border-b border-blue-500/30">
-            <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold neon-text">Local AI Avatar</h1>
-                <div class="flex items-center space-x-4">
-                    <div id="status" class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/50 neon-text">
-                        Idle
-                    </div>
-                    <button id="settings-btn" class="p-2 rounded-full bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/40 transition-all duration-300 neon-glow">
-                        ⚙️
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <div class="flex-1 flex relative z-10">
-            <!-- Avatar Container -->
-            <div id="avatar-container" class="flex-1 relative flex items-center justify-center">
-                <div class="relative">
-                    <!-- Avatar Canvas -->
-                    <canvas id="avatar-canvas" class="w-96 h-96 rounded-full neon-glow border-4 border-blue-400/50"></canvas>
-                    
-                    <!-- Avatar Upload Overlay -->
-                    <div id="avatar-upload" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300">
-                        <label for="avatar-input" class="cursor-pointer text-blue-400 hover:text-blue-300">
-                            <div class="text-center">
-                                <div class="text-4xl mb-2">📷</div>
-                                <div class="text-sm">Upload Avatar</div>
-                            </div>
-                        </label>
-                        <input id="avatar-input" type="file" accept="image/*" class="hidden">
-                    </div>
-                    
-                    <!-- Avatar Controls -->
-                    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                        <button id="3d-toggle" class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/40 transition-all duration-300 text-sm">
-                            2D
-                        </button>
-                        <button id="glow-toggle" class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/40 transition-all duration-300 text-sm">
-                            Glow On
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Panel -->
-            <div class="w-1/3 border-l border-blue-500/30 flex flex-col">
-                <!-- Chat Header -->
-                <div class="p-4 border-b border-blue-500/30">
-                    <h2 class="text-lg font-bold neon-text">Conversation</h2>
-                </div>
-
-                <!-- Chat Messages -->
-                <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4">
-                    <div class="text-center text-blue-400/70 text-sm">
-                        Start a conversation with your AI avatar...
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="p-4 border-t border-blue-500/30">
-                    <div class="flex space-x-2">
-                        <input 
-                            id="input" 
-                            type="text" 
-                            placeholder="Type your message..." 
-                            class="flex-1 px-4 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 focus:bg-gray-800/70 transition-all duration-300 text-white placeholder-gray-400"
-                        >
-                        <button id="mic-btn" class="px-4 py-2 bg-blue-500/20 border border-blue-400/50 rounded-lg hover:bg-blue-500/40 transition-all duration-300 neon-glow">
-                            🎤
-                        </button>
-                        <button id="send-btn" class="px-4 py-2 bg-blue-500/20 border border-blue-400/50 rounded-lg hover:bg-blue-500/40 transition-all duration-300">
-                            Send
-                        </button>
-                    </div>
-                    
-                    <!-- Recording Indicator -->
-                    <div id="recording-indicator" class="hidden mt-2 text-center">
-                        <div class="flex items-center justify-center space-x-2">
-                            <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                            <span class="text-sm text-red-400">Recording...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Panel -->
-        <div id="settings-panel" class="fixed inset-y-0 right-0 w-96 bg-gray-900/95 border-l border-blue-500/30 transform translate-x-full transition-transform duration-300 z-50">
-            <div class="p-6 h-full overflow-y-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold neon-text">Settings</h2>
-                    <button id="close-settings" class="text-blue-400 hover:text-blue-300">✕</button>
-                </div>
-
-                <!-- Settings Form -->
-                <form id="settings-form" class="space-y-6">
-                    <!-- Email Mode -->
-                    <div>
-                        <label class="block text-sm font-medium text-blue-400 mb-2">Email Mode</label>
-                        <select name="email_mode" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white" aria-label="Email mode selection">
-                            <option value="local">Local (Mail.app)</option>
-                            <option value="gmail">Gmail</option>
-                            <option value="outlook">Outlook</option>
-                            <option value="icloud">iCloud</option>
-                        </select>
-                    </div>
-
-                    <!-- Calendar Mode -->
-                    <div>
-                        <label class="block text-sm font-medium text-blue-400 mb-2">Calendar Mode</label>
-                        <select name="calendar_mode" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white" aria-label="Calendar mode selection">
-                            <option value="local">Local (Calendar.app)</option>
-                            <option value="gmail">Google Calendar</option>
-                            <option value="outlook">Outlook Calendar</option>
-                            <option value="icloud">iCloud Calendar</option>
-                        </select>
-                    </div>
-
-                    <!-- Financial API -->
-                    <div>
-                        <label class="block text-sm font-medium text-blue-400 mb-2">Financial API</label>
-                        <select name="financial_api" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white" aria-label="Financial API selection">
-                            <option value="yfinance">Yahoo Finance (Free)</option>
-                            <option value="alpha_vantage">Alpha Vantage (25/day)</option>
-                            <option value="finnhub">Finnhub (60/min)</option>
-                        </select>
-                    </div>
-
-                    <!-- 3D Mode -->
-                    <div>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="enable_3d" class="w-4 h-4 text-blue-400 bg-gray-800/50 border-blue-400/30 rounded focus:ring-blue-400">
-                            <span class="text-sm font-medium text-blue-400">Enable 3D Avatar</span>
-                        </label>
-                    </div>
-
-                    <!-- Neon Glow -->
-                    <div>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="neon_glow" checked class="w-4 h-4 text-blue-400 bg-gray-800/50 border-blue-400/30 rounded focus:ring-blue-400">
-                            <span class="text-sm font-medium text-blue-400">Neon Glow Effects</span>
-                        </label>
-                    </div>
-
-                    <!-- API Keys Section -->
-                    <div class="border-t border-blue-500/30 pt-6">
-                        <h3 class="text-lg font-bold text-blue-400 mb-4">API Keys</h3>
-                        
-                        <!-- Alpha Vantage -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-blue-400 mb-2">Alpha Vantage API Key</label>
-                            <input type="password" name="alpha_vantage_key" placeholder="Enter API key" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white">
-                        </div>
-
-                        <!-- Google Maps -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-blue-400 mb-2">Google Maps API Key</label>
-                            <input type="password" name="googlemaps_key" placeholder="Enter API key" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white">
-                        </div>
-
-                        <!-- iCloud Credentials -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-blue-400 mb-2">iCloud Username</label>
-                            <input type="email" name="icloud_username" placeholder="Enter iCloud email" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-blue-400 mb-2">iCloud App Password</label>
-                            <input type="password" name="icloud_password" placeholder="Enter app-specific password" class="w-full px-3 py-2 bg-gray-800/50 border border-blue-400/30 rounded-lg focus:outline-none focus:border-blue-400 text-white">
-                        </div>
-                    </div>
-
-                    <!-- Save Button -->
-                    <button type="submit" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-400/50 rounded-lg hover:bg-blue-500/40 transition-all duration-300 neon-glow">
-                        Save Settings
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="ui.js"></script>
-    <script src="avatar.js"></script>
-    <script src="settings-panel.js"></script>
+<body class="bg-black text-blue-300 font-orbitron flex flex-col h-screen">
+  <div class="flex-1 relative">
+    <canvas id="avatar-canvas" class="neon-glow m-auto"></canvas>
+    <div id="status" class="neon-text absolute top-4 left-4">Idle</div>
+    <button id="settings-btn" class="absolute top-4 right-4 text-2xl">⚙️</button>
+  </div>
+  <div id="chat" class="h-1/3 overflow-y-auto p-4 border-t border-blue-500"></div>
+  <div class="p-2 flex">
+    <input id="input" type="text" class="flex-1 bg-gray-900 p-2 rounded-l" placeholder="Type a message...">
+    <button id="mic-btn" class="bg-blue-500 p-2 rounded-r">🎤</button>
+  </div>
+  <div id="settings-panel" class="hidden fixed right-0 top-0 h-full w-1/3 bg-gray-800 p-4 overflow-y-auto"></div>
 </body>
-</html> 
+</html>

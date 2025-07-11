@@ -1,1 +1,26 @@
-node_modules
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+env/
+.venv/
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# macOS
+.DS_Store
+
+# Models/Assets (if large)
+models/*
+!models/.gitkeep
+assets/*
+!assets/avatar.jpg
+
+# Misc
+*.log
+temp.*
+output.*
