@@ -3,6 +3,8 @@ from pydantic import PydanticDeprecatedSince20
 
 warnings.filterwarnings("ignore", category=PydanticDeprecatedSince20)
 warnings.filterwarnings("ignore", message="Mixing V1 models and V2 models")
+warnings.filterwarnings("ignore", category=UserWarning, message="pkg_resources is deprecated as an API")
+warnings.filterwarnings("ignore", category=UserWarning, module="face_recognition_models")
 
 from flask import Flask, request, jsonify
 import json
